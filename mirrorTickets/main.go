@@ -10,14 +10,17 @@ func main() {
 	mirrorTickets := 0
 
 	for minTicket <= maxTicket {
-		itemOne := minTicket / 100000
-		itemTwo := (minTicket / 10000) % 10
-		itemThree := (minTicket / 1000) % 10
-		itemFour := (minTicket / 100) % 10
-		itemFive := (minTicket / 10) % 10
-		itemSix := minTicket % 10
 
-		if itemOne == itemSix && itemTwo == itemFive && itemThree == itemFour {
+		left := minTicket / 1000
+		right := minTicket % 1000
+
+		reversedLeft := 0
+
+		for temp := left; temp > 0; temp /= 10 {
+			reversedLeft = reversedLeft*10 + temp%10
+		}
+
+		if right == reversedLeft {
 			mirrorTickets++
 		}
 
