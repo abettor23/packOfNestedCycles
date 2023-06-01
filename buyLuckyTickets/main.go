@@ -2,78 +2,45 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"time"
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
 
 	minTicket := 100000
 	maxTicket := 999999
 
-	luckyTicketOne := 0
-	distanceOne := 0
+	luckyPrevious := 0 //переменные предыдущего найденного счастливого билета и текущего
+	luckyCurrent := 0
+	distance := 0 //переменная наибольшего найденного расстояния между счастливыми билетами
 
-	luckyTicketTwo := 0
-	distanceTwo := 0
+	for minTicket <= maxTicket {
 
-	for {
+		left := minTicket / 1000 //разделение номера билета на две части, для поиска счастливого по сумме чисел
+		right := minTicket % 1000
 
-		for luckyTicketOne == 0 {
-			fmt.Println("**1")
-			currentTicketOne := rand.Intn(maxTicket-minTicket+1) + minTicket
+		leftSum := 0 //сумма чисел частей билета для определения счастливого (сравнения друг с другом)
+		rightSum := 0
 
-			itemOne := currentTicketOne / 100000
-			itemTwo := (currentTicketOne / 10000) % 10
-			itemThree := (currentTicketOne / 1000) % 10
-			itemFour := (currentTicketOne / 100) % 10
-			itemFive := (currentTicketOne / 10) % 10
-			itemSix := currentTicketOne % 10
+		for left > 0 || right > 0 { //цикл для определения суммы чисел каждой из частей билета (сложение по очереди)
+			numOne := left % 10
+			leftSum += numOne
+			left /= 10
 
-			if itemOne+itemTwo+itemThree == itemFour+itemFive+itemSix {
-				luckyTicketOne = currentTicketOne
-			} else {
-				currentTicketOne++
-				distanceOne++
-			}
+			numTwo := right % 10
+			rightSum += numTwo
+			right /= 10
 		}
 
-		for distanceOne > 0 && luckyTicketTwo == 0 {
-			fmt.Println("**2")
-			currentTicketTwo := rand.Intn(maxTicket-minTicket+1) + minTicket
-
-			itemOne2 := currentTicketTwo / 100000
-			itemTwo2 := (currentTicketTwo / 10000) % 10
-			itemThree2 := (currentTicketTwo / 1000) % 10
-			itemFour2 := (currentTicketTwo / 100) % 10
-			itemFive2 := (currentTicketTwo / 10) % 10
-			itemSix2 := currentTicketTwo % 10
-
-			if itemOne2+itemTwo2+itemThree2 == itemFour2+itemFive2+itemSix2 {
-				luckyTicketTwo = currentTicketTwo
-			} else {
-				currentTicketTwo++
-				distanceTwo++
-			}
+		if leftSum == rightSum { //определение счастливого билета и порядковая запись для определения расстояния между ними
+			luckyPrevious = luckyCurrent
+			luckyCurrent = minTicket
 		}
 
-		if distanceOne == 0 {
-			fmt.Println("Вы сразу купили сачстливый билет, не надо ничего больше покупать!")
-			break
+		if luckyCurrent-luckyPrevious > distance && luckyPrevious != 0 { //определение расстояния. если больше - заменить значение.
+			distance = luckyCurrent - luckyPrevious
 		}
 
-		if distanceTwo > distanceOne {
-			distanceOne = distanceTwo
-			luckyTicketOne = luckyTicketTwo
-
-			distanceTwo = 0
-			luckyTicketTwo = 0
-		} else {
-			fmt.Println("Билетов до счастливого в 1 случае:", distanceOne)
-			fmt.Println("Билетов до счастливого в 2 случае:", distanceTwo)
-			fmt.Println("Первый купленный билет имеет наилучшее значение для покупки билетов до счастливого")
-			break
-		}
+		minTicket++ //переход к новому номеру билета
 	}
+	fmt.Println("Максимальный диапазон между счастливыми билетами составляет:", distance)
 }
